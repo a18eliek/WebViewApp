@@ -9,7 +9,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -23,19 +26,8 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        //Visa Webview
-        WebView my_webview = new WebView(this); //Skapa webview
-        setContentView(my_webview); //gör element aktivt
-        my_webview.loadUrl("https://wwwlab.iit.his.se/a18eliek/WEBUGAppen/"); //Ladda en sida
+        visaWebbSida("https://wwwlab.iit.his.se/a18eliek/WEBUGAppen/");
 
-        //Fixa lagg
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            // chromium, enable hardware acceleration
-            my_webview.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-        } else {
-            // older android version, disable hardware acceleration
-            my_webview.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-        }
     }
 
     @Override
@@ -53,10 +45,23 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_omappen) {
+            visaWebbSida("file:///android_asset/om-appen.html");
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
+
+   public void visaWebbSida(String url) {
+       WebView myWebView = (WebView) findViewById(R.id.webview);
+       myWebView.loadUrl(url);
+
+       //Slå på Javascript samt andra saker så att appen fungerar som det ska
+       WebSettings webSettings = myWebView.getSettings();
+       webSettings.setJavaScriptEnabled(true);
+       webSettings.setDomStorageEnabled(true);
+       myWebView.setWebChromeClient(new WebChromeClient());
+       myWebView.setWebViewClient(new WebViewClient());
+   }
 }
